@@ -35,4 +35,5 @@ dd01a35078f040ca984cdd349f18d0b67e486c35 Update CHANGELOG.md
 225466bc3e5f35baa5d07197bbc079345b77525e Cleanup after v0.12.23 release
 
 ```
-5. 
+5. Команда `git log -S 'func providerSource('` покажет коммит `8c928e83589d90a031f811fae52a81be7153e82f` где была создана функция `func providerSource`, с ключем `-p` можно вывести патч коммита, чтобы убедиться что эта функция там содержится.
+6. 
