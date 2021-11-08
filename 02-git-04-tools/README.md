@@ -51,3 +51,4 @@ $ git log -L :globalPluginDirs:plugins.go
 7. Функцию `synchronizedWriters` создал `Martin Atkins`
 
 Команда `git grep -c synchronizedWriters` не находит эту функцию. Судя по выводу `git log -p -S 'func synchronizedWriters' --pretty="%H %an"` функция была удалена, вместе с файлом где она объявлялась, в коммите `bdfea50cc85161dea41be0fe3381fd98731ff786` автором `James Bardin`, по выводу этойже команды можно найти первый коммит где инициализировалась данная функция и автором его был `Martin Atkins`
+
