@@ -53,7 +53,8 @@ end
     233               occur  where  a  reserved  word  is permitted to be recognized.  Since they do not cause a word break, they must be separated from list by
     234               whitespace or another shell metacharacter.
 ```
-Я думаю это и есть ответ на данный вопрос.
+Я думаю это и есть ответ на данный вопрос.  
+
 10. С помощью списка можно передать в команду `touch` список имен файлов в такой конструкции `{1..10000}` в итоге командой `touch {1..10000}` создастся 10000 файлов с именами от 1 до 10000
 При попытки создать 300000 файлов выходит ошибка что слишком много аргументов для команды `touch`
 ```bash
@@ -70,7 +71,7 @@ vagrant@vagrant:~/test$ touch {1..300000}
 
               When used with [[, the < and > operators sort lexicographically using the current locale.
 ```
-конструкция `[[ -d /tmp ]]` возвращяет 1, т.к. тут происходит проверка на то есть ли директория `/tmp`
+конструкция `[[ -d /tmp ]]` возвращяет 1, т.к. тут происходит проверка на то, есть ли директория `/tmp`
 ```bash
 vagrant@vagrant:~$ if [[ -d /tmp ]]; then echo '1'; else echo '0'; fi
 1
