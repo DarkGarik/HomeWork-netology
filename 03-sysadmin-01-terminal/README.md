@@ -35,6 +35,73 @@ end
     836               list.  A value of ignoredups causes lines matching the previous history entry to not be saved.  A value
     837               of ignoreboth is shorthand for ignorespace and ignoredups.  A value of erasedups  causes  all  previous 
 ```
+9. В `man bash` пишем конструкцию `-N` чтобы отобразить номера строк. Далее ищем фигурные скобки `/\{` предварительно заэкранировав их.
+Первым в поиске выпадают зарезервированные слова, где также указывается цикл `while { }`:
+```bash
+    174 RESERVED WORDS
+    175        Reserved  words are words that have a special meaning to the shell.  The following words are recognized as re‐
+    176        served when unquoted and either the first word of a simple command (see SHELL GRAMMAR below) or the third word
+    177        of a case or for command:
+    178
+    179        ! case  coproc  do done elif else esac fi for function if in select then until while { } time [[ ]] 
+```
+Далее мы видим что фигурные скобки используються для списка:
+```bash
+    230        { list; }
+    231               list  is simply executed in the current shell environment.  list must be terminated with a newline or semicolon.  This is known as a group
+    232               command.  The return status is the exit status of list.  Note that unlike the metacharacters ( and ), { and } are reserved words and must
+    233               occur  where  a  reserved  word  is permitted to be recognized.  Since they do not cause a word break, they must be separated from list by
+    234               whitespace or another shell metacharacter.
+```
+Я думаю это и есть ответ на данный вопрос.
+10. С помощью списка можно передать в команду `touch` список имен файлов в такой конструкции `{1..10000}` в итоге командой `touch {1..10000}` создастся 10000 файлов с именами от 1 до 10000
+При попытки создать 300000 файлов выходит ошибка что слишком много аргументов для команды `touch`
+```bash
+vagrant@vagrant:~/test$ touch {1..300000}
+-bash: /usr/bin/touch: Argument list too long 
+```
+11. В двойных квадратных скобках выражение возвращяет 1 или 0 в зависимости от условий 
+```bash
+       [[ expression ]]
+              Return a status of 0 or 1 depending on the evaluation of the conditional expression expression.  Expressions are composed of the primaries
+              described below under CONDITIONAL EXPRESSIONS.  Word splitting and pathname expansion are not performed on the words between  the  [[  and
+              ]]; tilde expansion, parameter and variable expansion, arithmetic expansion, command substitution, process substitution, and quote removal
+              are performed.  Conditional operators such as -f must be unquoted to be recognized as primaries.
+
+              When used with [[, the < and > operators sort lexicographically using the current locale.
+```
+конструкция `[[ -d /tmp ]]` возвращяет 1, т.к. тут происходит проверка на то есть ли директория `/tmp`
+```bash
+vagrant@vagrant:~$ if [[ -d /tmp ]]; then echo '1'; else echo '0'; fi
+1
+vagrant@vagrant:~$ if [[ -d /tmp1 ]]; then echo '1'; else echo '0'; fi
+0
+```
+12. 
+```bash
+vagrant@vagrant:~$ mkdir /tmp/new_path_directory
+vagrant@vagrant:~$ cp /bin/bash /tmp/new_path_directory/
+vagrant@vagrant:~$ PATH=/tmp/new_path_directory/:$PATH
+vagrant@vagrant:~$ type -a bash
+bash is /tmp/new_path_directory/bash
+bash is /bin/bash
+bash is /usr/bin/bash
+```
+13. `man at`:
+```bash
+ NAME
+       at, batch, atq, atrm - queue, examine, or delete jobs for later execution
+....
+DESCRIPTION
+       at and batch read commands from standard input or a specified file which are to be executed at a later time, using /bin/sh.
+
+       at      executes commands at a specified time.
+....
+       batch   executes commands when system load levels permit; in other words, when the load average drops below 1.5, or the value  specified  in  the
+               invocation of atd.
+```
+at - запускает команды в заданное время.  
+batch - запускает команды, когда уровни загрузки системы позволяют это делать. т.е. когда средняя нагрузка падает ниже 1,5 или значения, указанного при вызове atd.
 
 
 # Домашнее задание к занятию "3.1. Работа в терминале, лекция 1"
