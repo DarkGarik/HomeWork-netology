@@ -32,10 +32,6 @@ vagrant@vagrant:~$ ls 123 2>/dev/pts/1
 ```bash 
 vagrant@vagrant:~$ ls
 test  test1
-vagrant@vagrant:~$ mcedit test1
-
-vagrant@vagrant:~$ ls
-test  test1
 vagrant@vagrant:~$ cat test1
 123
 321
