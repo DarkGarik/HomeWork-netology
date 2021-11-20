@@ -1,32 +1,69 @@
 1. `chdir("/tmp")`  
-2. `file` берет информацию из файла `/etc/magic`  
+2. `file` берет информацию из файла `/usr/share/misc/magic.mgc`  
 ```bash
 vagrant@vagrant:~$ strace file /dev/sda
 ...
 openat(AT_FDCWD, "/etc/magic", O_RDONLY) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=111, ...}) = 0
+read(3, "# Magic local data for file(1) c"..., 4096) = 111
+read(3, "", 4096)                       = 0
+close(3)                                = 0
+openat(AT_FDCWD, "/usr/share/misc/magic.mgc", O_RDONLY) = 3
 ...
 ```
-3. 1
-4. Зомби не занимают памяти (как процессы-сироты), но блокируют записи в таблице процессов, размер которой ограничен для каждого пользователя и системы в целом.
+3. В `screen` запускам `ping localhost > ping.log`, далее:  
+```bash
+vagrant@vagrant:~$ rm ping.log
+vagrant@vagrant:~$ ps aux | grep ping
+vagrant     1344  0.0  0.2   9772  2568 pts/1    S+   11:32   0:00 ping localhost
+vagrant@vagrant:~$ sudo lsof -p 1344
+COMMAND  PID    USER   FD   TYPE DEVICE SIZE/OFF   NODE NAME
+...
+ping    1344 vagrant    1w   REG  253,0    17618 131104 /home/vagrant/ping.log (deleted)
+...
+vagrant@vagrant:~$ sudo ls -l /proc/1344/fd/
+total 0
+lrwx------ 1 root root 64 Nov 20 11:33 0 -> /dev/pts/1
+l-wx------ 1 root root 64 Nov 20 11:33 1 -> '/home/vagrant/ping.log (deleted)'
+lrwx------ 1 root root 64 Nov 20 11:33 2 -> /dev/pts/1
+lrwx------ 1 root root 64 Nov 20 11:33 3 -> 'socket:[28339]'
+lrwx------ 1 root root 64 Nov 20 11:33 4 -> 'socket:[28340]'
+vagrant@vagrant:~$ sudo -i
+root@vagrant:~# cat /dev/null > /proc/1344/fd/1
+```
+4. Зомби не занимают памяти (как процессы-сироты), но блокируют записи в таблице процессов, размер которой ограничен для каждого пользователя и системы в целом.  
 5. 
 ```bash
 vagrant@vagrant:~$ sudo opensnoop-bpfcc
 PID    COMM               FD ERR PATH
-609    irqbalance          6   0 /proc/interrupts
-609    irqbalance          6   0 /proc/stat
-609    irqbalance          6   0 /proc/irq/20/smp_affinity
-609    irqbalance          6   0 /proc/irq/0/smp_affinity
-609    irqbalance          6   0 /proc/irq/1/smp_affinity
-609    irqbalance          6   0 /proc/irq/8/smp_affinity
-609    irqbalance          6   0 /proc/irq/12/smp_affinity
-609    irqbalance          6   0 /proc/irq/14/smp_affinity
-609    irqbalance          6   0 /proc/irq/15/smp_affinity
-609    irqbalance          6   0 /proc/interrupts
-609    irqbalance          6   0 /proc/stat 
+788    vminfo              4   0 /var/run/utmp
+587    dbus-daemon        -1   2 /usr/local/share/dbus-1/system-services
+587    dbus-daemon        19   0 /usr/share/dbus-1/system-services
+587    dbus-daemon        -1   2 /lib/dbus-1/system-services
+587    dbus-daemon        19   0 /var/lib/snapd/dbus-1/system-services/
+391    systemd-udevd      14   0 /sys/fs/cgroup/unified/system.slice/systemd-udevd.service/cgroup.procs
+391    systemd-udevd      14   0 /sys/fs/cgroup/unified/system.slice/systemd-udevd.service/cgroup.threads
+607    irqbalance          6   0 /proc/interrupts
+607    irqbalance          6   0 /proc/stat
 ```
-6. 1
+6. `uname -a` использует системный вызов `uname`:  
+```bash
+vagrant@vagrant:~$ strace uname -a
+...
+uname({sysname="Linux", nodename="vagrant", ...}) = 0
+fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0), ...}) = 0
+uname({sysname="Linux", nodename="vagrant", ...}) = 0
+uname({sysname="Linux", nodename="vagrant", ...}) = 0 
+...
+```
+```bash
+$ man 2 uname
+...
+       Part of the utsname information is also accessible via /proc/sys/kernel/{ostype, hostname, osrelease, version, domainname}.
+....
+```
 7. `&&` логический оператор, `;`это простая последовательность. Т.е. при `&&` следующая команда выполнится, только после успешного выполнения предыдущей. При `;` все команды будут выполнены последовательно, независимо от результата выполнения предыдущей.  
-Если применить `set -e` в bash при использовании `&&` ничего не изменится, т.к. ключ `-e` означает немедленный выход, если конвейер, список или составная команда завершается с ненулевым статусом, что означает то же поведение, что и при обычном использовании `&&`  
+Если применить `set -e` в bash при использовании `&&` ничего не изменится, т.к. ключ `-e` означает немедленный выход, если конвейер, список или составная команда завершается с ненулевым статусом, что означает то же поведение, что и при обычном использовании `&&`    
 ```bash
        set [--abefhkmnptuvxBCEHPT] [-o option-name] [arg ...]
        set [+abefhkmnptuvxBCEHPT] [+o option-name] [arg ...]
@@ -51,7 +88,7 @@ PID    COMM               FD ERR PATH
                       effect until the compound command or the command containing the function call completes. 
 ```
 8. `set -euxo pipefail` содержит опции: `-e немедленный выход если не 0`, `-u    При раскрытии параметров рассматривать неустановленные переменные и параметры, отличные от специальных параметров «@» и «*», как ошибку.`, `-x      После раскрытия каждой простой команды для команды, команды регистра, команды выбора или арифметики команды отобразите развернутое значение PS4, за которым следует команда и ее расширенные аргументы или связанный список слов.` и опцию `-o pipefail Если установлено, возвращаемое значение конвейера - это значение последней (самой правой) команды для выхода с ненулевым статусом или ноль, если все команды в конвейере завершаются успешно. По умолчанию эта опция отключена.`  
-В сценариях такой набор опций хорошо использовать для проверки, что точно выполняется все команды, и отлавливания ошибок внутри команд соединенных `;`
+В сценариях такой набор опций хорошо использовать для проверки, что точно выполняется все команды, и отлавливания ошибок внутри команд соединенных `;`  
 9. Наиболее часто встречаемый статутс у процессов в системе `S`
 ```bash
 vagrant@vagrant:~$ ps -o stat ax | sort | cut -c 1-1 | uniq -c
