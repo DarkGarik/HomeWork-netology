@@ -27,7 +27,7 @@ Set-Cookie: prov=df18353b-2181-b447-b809-aca7149aea5a; domain=.stackoverflow.com
 
 Connection closed by foreign host.
 ```
-2.  Долше всего обрабатывался скрипт `analitics.js`
+2.  Долше всего обрабатывался скрипт `analitics.js`:  
 ![](2021-11-27-13-01-29.png)
 
 ```html
@@ -50,7 +50,8 @@ Vary: Fastly-SSL
 X-DNS-Prefetch-Control: off
 ```
 3. `31.173.80.120`  
-`https://2ip.ru/`:
+`https://2ip.ru/`:  
+
 ![](2021-11-27-13-04-47.png)
 4. Провайдер `MegaFon`, автономная система`AS25159`
 ```bash
