@@ -26,13 +26,13 @@ gorkov@gorkov-me:~$
 
 while ((1==1))
 do
-curl https://localhost:4757
-if (($? != 0))
-then
-date >> curl.log
-else
-break
-fi
+    curl https://localhost:4757
+    if (($? != 0))
+    then
+        date >> curl.log
+        else
+        break
+    fi
 done
 ```
   
@@ -43,17 +43,17 @@ count=(1 2 3 4 5)
 ip_all=(192.168.0.1 173.194.222.113 87.250.250.242)
 for ip in ${ip_all[@]}
 do
-for i in ${count[@]}
-do
-curl --output /dev/null --silent --connect-timeout 3 http://$ip
-if (("$?" != "0"))
-then
-out="Service $ip not response"
-else
-out="Service $ip ok"
-fi
-echo `date` $out >> test.log
-done
+    for i in ${count[@]}
+    do
+        curl --output /dev/null --silent --connect-timeout 3 http://$ip
+        if (("$?" != "0"))
+        then
+            out="Service $ip not response"
+            else
+            out="Service $ip ok"
+        fi
+        echo `date` $out >> test.log
+    done
 done
 ```
   
@@ -64,17 +64,17 @@ count=(1 2 3 4 5)
 ip_all=(192.168.0.1 173.194.222.113 87.250.250.242)
 for ip in ${ip_all[@]}
 do
-for i in ${count[@]}
-do
-curl --output /dev/null --silent --connect-timeout 3 http://$ip
-if (("$?" != "0"))
-then
-echo $ip >> error
-exit
-else
-out="Service $ip ok"
-fi
-echo `date` $out >> test.log
-done
+    for i in ${count[@]}
+    do
+        curl --output /dev/null --silent --connect-timeout 3 http://$ip
+        if (("$?" != "0"))
+        then
+            echo $ip >> error
+            exit
+            else
+            out="Service $ip ok"
+        fi
+        echo `date` $out >> test.log
+    done
 done
 ```
