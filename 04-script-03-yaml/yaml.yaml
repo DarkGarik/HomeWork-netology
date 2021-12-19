@@ -1,0 +1,6 @@
+---
+services:
+- drive.google.com: 173.194.222.194
+  google.com: 216.58.210.174
+  mail.google.com: 216.58.210.165
+...
