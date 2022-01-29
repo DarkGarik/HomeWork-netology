@@ -88,6 +88,10 @@ vagrant@server1:~/debian$ echo test > /data/host.txt
 vagrant@server1:~/debian$ docker exec -it tender_wilbur bash
 root@6d96e23f2e8b:/# ls /data
 centos.txt  host.txt
+root@6d96e23f2e8b:/# cat /data/centos.txt
+test
+root@6d96e23f2e8b:/# cat /data/host.txt
+test
 root@6d96e23f2e8b:/# exit
 exit
 ```
