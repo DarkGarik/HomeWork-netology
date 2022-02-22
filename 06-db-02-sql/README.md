@@ -299,7 +299,7 @@ test_db=# explain SELECT surname from clients WHERE ord is NOT NULL;
 ```
 pg_dump test_db > /backup/test_db.sql
 ```
-```
+``` yaml
 # Use postgres/example user/password credentials
 version: '3.1'
 
