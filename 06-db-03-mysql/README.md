@@ -68,6 +68,7 @@ mysql> select count(*) from orders where price > '300';
 **приведите в ответе к задаче**.
 
 ### Ответ:
+Здесь можно былобы все одним запросом сделать при создании пользователя, но шёл по шагам согласно заданию.  
 ```
 mysql> CREATE USER 'test'@'localhost' IDENTIFIED WITH mysql_native_password BY 'test-pass';
 Query OK, 0 rows affected (0.02 sec)
