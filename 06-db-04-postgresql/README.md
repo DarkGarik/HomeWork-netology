@@ -132,6 +132,14 @@ test_database=# create table orders_1 (check (price > 499)) inherits (orders);
 CREATE TABLE
 test_database=# create table orders_2 (check (price <= 499)) inherits (orders);
 CREATE TABLE
+test_database=# INSERT INTO orders_1 SELECT * FROM orders WHERE price > 499;
+INSERT 0 3
+test_database=# INSERT INTO orders_2 SELECT * FROM orders WHERE price <= 499;
+INSERT 0 5
+test_database=# CREATE RULE price_up_499 AS ON INSERT TO orders WHERE (price > 499) DO INSTEAD INSERT INTO orders_1 VALUES (NEW.*);
+CREATE RULE
+test_database=# CREATE RULE price_low_499 AS ON INSERT TO orders WHERE (price <= 499) DO INSTEAD INSERT INTO orders_2 VALUES (NEW.*);
+CREATE RULE
 ```
 При проектировании таблиц можно заранее применять секционирование таблиц, если подразумевается большой объем данных.  
 
