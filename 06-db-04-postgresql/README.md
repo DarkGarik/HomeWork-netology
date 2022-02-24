@@ -33,7 +33,8 @@ postgres=# \conninfo
 You are connected to database "postgres" as user "postgres" via socket in "/var/run/postgresql" at port "5432".
 ```
 или, смотря что подразумевалось под `подключения к БД`
-```postgres=#  SELECT pid, usename, state, wait_event, backend_start from pg_stat_activity;
+```
+postgres=#  SELECT pid, usename, state, wait_event, backend_start from pg_stat_activity;
  pid | usename  | state  |     wait_event      |         backend_start         
 -----+----------+--------+---------------------+-------------------------------
   66 |          |        | AutoVacuumMain      | 2022-02-23 18:32:30.7102+00
