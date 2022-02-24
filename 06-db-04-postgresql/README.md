@@ -150,14 +150,37 @@ CREATE RULE
 Как бы вы доработали бэкап-файл, чтобы добавить уникальность значения столбца `title` для таблиц `test_database`?
 
 ### Ответ:
-Для обеспечения уникальности значений столбца `title` достаточно добавить `UNIQUE` в следующей секции бэкапа:
+Для обеспечения уникальности значений столбца `title` достаточно добавить слудующие строки в секции после создания таблиц:
 ```sql
-CREATE TABLE public.orders (
-    id integer NOT NULL,
-    title character varying(80) UNIQUE NOT NULL,
-    price integer DEFAULT 0
-);
+ALTER TABLE public.orders_1 ADD CONSTRAINT u_orders_1 UNIQUE (title);
+ALTER TABLE public.orders_2 ADD CONSTRAINT u_orders_2 UNIQUE (title);
 ```
+```sql
+...
+CREATE TABLE public.orders_1 (
+    CONSTRAINT orders_1_price_check CHECK ((price > 499))
+)
+INHERITS (public.orders);
+
+
+ALTER TABLE public.orders_1 OWNER TO postgres;
+ALTER TABLE public.orders_1 ADD CONSTRAINT u_orders_1 UNIQUE (title);
+
+--
+-- Name: orders_2; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.orders_2 (
+    CONSTRAINT orders_2_price_check CHECK ((price <= 499))
+)
+INHERITS (public.orders);
+
+
+ALTER TABLE public.orders_2 OWNER TO postgres;
+ALTER TABLE public.orders_2 ADD CONSTRAINT u_orders_2 UNIQUE (title);
+...
+```
+
 
 ---
 
