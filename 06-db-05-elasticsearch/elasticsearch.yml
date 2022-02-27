@@ -4,3 +4,4 @@ path.data: /var/lib/elasticsearch/data
 xpack.security.enabled: false
 network.host: 0.0.0.0
 discovery.seed_hosts: localhost
+path.repo: /elasticsearch-8.0.0/snapshots

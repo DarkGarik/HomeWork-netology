@@ -12,6 +12,7 @@ COPY elasticsearch.yml /elasticsearch-8.0.0/config
 RUN groupadd -g 1000 elasticsearch && useradd elasticsearch -u 1000 -g 1000 && \
     mkdir /var/lib/elasticsearch && \
     mkdir /var/lib/elasticsearch/data && \
+    mkdir /elasticsearch-8.0.0/snapshots && \
     chown -R elasticsearch:elasticsearch /elasticsearch-8.0.0 && \
     chown -R elasticsearch:elasticsearch /var/lib/elasticsearch
 

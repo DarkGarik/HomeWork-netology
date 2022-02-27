@@ -111,6 +111,21 @@
 При проектировании кластера elasticsearch нужно корректно рассчитывать количество реплик и шард,
 иначе возможна потеря данных индексов, вплоть до полной, при деградации системы.
 
+### Ответ:
+- http://localhost:9200/_cat/indices?v
+    ```
+    health status index uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+    green  open   ind-1 lkYToM7fRVaCy9LlRdD_gg   1   0          0            0       225b           225b
+    yellow open   ind-3 Gjyn2Y2nQMKYvjJyVnJscw   4   2          0            0       900b           900b
+    yellow open   ind-2 zpqwG3zZQTa7vI81rEiALg   2   1          0            0       450b           450b
+    ```
+- http://localhost:9200/_cat/health?v
+    ```
+    epoch      timestamp cluster       status node.total node.data shards pri relo init unassign pending_tasks max_task_wait_time active_shards_percent
+    1645975622 15:27:02  elasticsearch yellow          1         1      8   8    0    0       10             0                  -                 44.4%
+    ```
+- Состояние yellow у индексов в котрых уазаны несколько реплик, т.к. у нас одна только нода, рекплики делать некуда.
+
 ## Задача 3
 
 В данном задании вы научитесь:
@@ -141,7 +156,55 @@
 Подсказки:
 - возможно вам понадобится доработать `elasticsearch.yml` в части директивы `path.repo` и перезапустить `elasticsearch`
 
+### Ответ:
+-   
+    ```bash
+    [elasticsearch@c2e57573e052 elasticsearch-8.0.0]$ curl -X PUT "localhost:9200/_snapshot/netology_backup?pretty" -H 'Content-Type: application/json' -d'
+    > {
+    >   "type": "fs",
+    >   "settings": {
+    >     "location": "/elasticsearch-8.0.0/snapshots"
+    >   }
+    > }
+    > '
+    {
+    "acknowledged" : true
+    }
+    ```
+- http://localhost:9200/_cat/indices?v
+    ```
+    health status index uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+    green  open   test  M-JHscv1Q7G-PcgE1Hm9YA   1   0          0            0       225b           225b
+    ```
+- 
+    ```
+    [elasticsearch@c2e57573e052 elasticsearch-8.0.0]$ ls -l snapshots/
+    total 36
+    -rw-r--r-- 1 elasticsearch elasticsearch   855 Feb 27 16:33 index-0
+    -rw-r--r-- 1 elasticsearch elasticsearch     8 Feb 27 16:33 index.latest
+    drwxr-xr-x 4 elasticsearch elasticsearch  4096 Feb 27 16:33 indices
+    -rw-r--r-- 1 elasticsearch elasticsearch 17407 Feb 27 16:33 meta-0mzSdxa6SOa7aZi5Ih6rfw.dat
+    -rw-r--r-- 1 elasticsearch elasticsearch   364 Feb 27 16:33 snap-0mzSdxa6SOa7aZi5Ih6rfw.dat
+    ```
 ---
+- http://localhost:9200/_cat/indices?v
+    ```
+    health status index  uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+    green  open   test-2 cTFP3d_lQESAxMYFq7fpXw   1   0          0            0       225b           225b
+    ```
+- В документации рекомендуется перед восстановлением удалить все индексы, воизбежании конфликтов, но по заданию у нас это не уточнялось, и есть всего два разных индекса, так что делал без очистки:
+    ```
+    [elasticsearch@c2e57573e052 elasticsearch-8.0.0]$ curl -X POST "localhost:9200/_snapshot/netology_backup/my_snapshot_2022.02.27/_restore?pretty"
+    {
+    "accepted" : true
+    }
+    ```
+    http://localhost:9200/_cat/indices?v
+    ```
+    health status index  uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+    green  open   test-2 cTFP3d_lQESAxMYFq7fpXw   1   0          0            0       225b           225b
+    green  open   test   0Rza1_tzSmW67EwV32hMYg   1   0          0            0       225b           225b
+```
 
 ### Как cдавать задание
 
