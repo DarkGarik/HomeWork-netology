@@ -36,7 +36,7 @@
     ```
 
     ### Ответ:
-    [Код:](/01/main.go)
+    [Код:](/07-terraform-05-golang/01/main.go)
     ```GO
     package main
 
@@ -65,7 +65,7 @@
     ```
 
     ### Ответ:
-    [Код:](/02/main.go)
+    [Код:](/07-terraform-05-golang/02/main.go)
     ```GO
     package main
 
@@ -90,7 +90,7 @@
 1. Напишите программу, которая выводит числа от 1 до 100, которые делятся на 3. То есть `(3, 6, 9, …)`.
 
     ### Ответ:
-    [Код:](/03/main.go)
+    [Код:](/07-terraform-05-golang/03/main.go)
     ```GO
     package main
 
