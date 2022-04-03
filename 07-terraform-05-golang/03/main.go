@@ -1,9 +1,7 @@
 package main
 
-import (
-	"fmt"
-	//"strings"
-)
+import "fmt"
+
 func main() {
 	all := []int{}
 	for i := 1; i <= 100; i++ {
