@@ -5,12 +5,11 @@ import (
 	//"strings"
 )
 func main() {
-	all := []string{}
+	all := []int{}
 	for i := 1; i <= 100; i++ {
-		fmt.Println(i)
 		if i%3 == 0{
-			all = append(all, string(i))
-			fmt.Println(string(i))
+			all = append(all, i)
+			//fmt.Println(i)
 		}
 	}
 	fmt.Println(all)
