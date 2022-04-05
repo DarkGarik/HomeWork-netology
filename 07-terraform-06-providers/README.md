@@ -18,7 +18,22 @@
     * С каким другим параметром конфликтует `name`? Приложите строчку кода, в которой это указано.
     * Какая максимальная длина имени? 
     * Какому регулярному выражению должно подчиняться имя? 
-    
+
+### Ответ:
+1. `resource` перечисленны в файле [provider.go начиная со строки 868](https://github.com/hashicorp/terraform-provider-aws/blob/de6bf7541dd8a5c81d0471e7e8cb76eb76578e66/internal/provider/provider.go#L868)  
+   `data_source` в том-же [provider.go со строки 412](https://github.com/hashicorp/terraform-provider-aws/blob/de6bf7541dd8a5c81d0471e7e8cb76eb76578e66/internal/provider/provider.go#L412)
+1. [`name` конфликтует с параметром `name_prefix`](https://github.com/hashicorp/terraform-provider-aws/blob/de6bf7541dd8a5c81d0471e7e8cb76eb76578e66/internal/service/sqs/queue.go#L82)  
+   В функции `resourceQueueCustomizeDiff` начиная со строки [407 в файле /internal/service/sqs/queue.go](https://github.com/hashicorp/terraform-provider-aws/blob/690cee18d1d3aefce2270cc88cf21e05b6ae6a06/internal/service/sqs/queue.go#L407) есть регулярное выражение regexp.MustCompile в котором как раз и указана длина имени:
+   ``` GO
+    if fifoQueue {
+		re = regexp.MustCompile(`^[a-zA-Z0-9_-]{1,75}\.fifo$`)
+	} else {
+		re = regexp.MustCompile(`^[a-zA-Z0-9_-]{1,80}$`)
+	}
+    ```
+   
+
+
 ## Задача 2. (Не обязательно) 
 В рамках вебинара и презентации мы разобрали как создать свой собственный провайдер на примере кофемашины. 
 Также вот официальная документация о создании провайдера: 
