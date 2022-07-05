@@ -45,12 +45,26 @@
     - curl http://localhost:8888
     - curl http://localhost:9092/kapacitor/v1/ping
 
+
+### Ответ:
+```bash
+gorkov@gorkov-HP-Laptop-14s:~$ curl http://localhost:8086/ping
+gorkov@gorkov-HP-Laptop-14s:~$ curl http://localhost:8888
+<!DOCTYPE html><html><head><meta http-equiv="Content-type" content="text/html; charset=utf-8"><title>Chronograf</title><link rel="icon shortcut" href="/favicon.fa749080.ico"><link rel="stylesheet" href="/src.9cea3e4e.css"></head><body> <div id="react-root" data-basepath=""></div> <script src="/src.a969287c.js"></script> </body></html>gorkov@gorkov-HP-Laptop-14s:~$ 
+gorkov@gorkov-HP-Laptop-14s:~$ curl http://localhost:9092/kapacitor/v1/ping
+gorkov@gorkov-HP-Laptop-14s:~$ 
+
+```
+
 А также скриншот веб-интерфейса ПО chronograf (`http://localhost:8888`). 
+
+### Ответ:
+![](2022-07-04-14-23-35.png)
 
 P.S.: если при запуске некоторые контейнеры будут падать с ошибкой - проставьте им режим `Z`, например
 `./data:/var/lib:Z`
 
-4. Перейдите в веб-интерфейс Chronograf (`http://localhost:8888`) и откройте вкладку `Data explorer`.
+1. Перейдите в веб-интерфейс Chronograf (`http://localhost:8888`) и откройте вкладку `Data explorer`.
 
     - Нажмите на кнопку `Add a query`
     - Изучите вывод интерфейса и выберите БД `telegraf.autogen`
@@ -61,6 +75,14 @@ P.S.: если при запуске некоторые контейнеры б�
 
 Для выполнения задания приведите скриншот с отображением метрик утилизации места на диске 
 (disk->host->telegraf_container_id) из веб-интерфейса.
+
+### Ответ:
+В сандбоксе в дефолтном конфиге убрали инпуты mem и disk, добавил их в `telegraf.conf`:
+```
+[[inputs.disk]]
+[[inputs.mem]]
+```
+![](2022-07-04-16-49-19.png)
 
 5. Изучите список [telegraf inputs](https://github.com/influxdata/telegraf/tree/master/plugins/inputs). 
 Добавьте в конфигурацию telegraf следующий плагин - [docker](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/docker):
@@ -88,6 +110,9 @@ P.S.: если при запуске некоторые контейнеры б�
 
 После настройке перезапустите telegraf, обновите веб интерфейс и приведите скриншотом список `measurments` в 
 веб-интерфейсе базы telegraf.autogen . Там должны появиться метрики, связанные с docker.
+
+### Ответ:
+![](2022-07-04-18-21-21.png)
 
 Факультативно можете изучить какие метрики собирает telegraf после выполнения данного задания.
 
