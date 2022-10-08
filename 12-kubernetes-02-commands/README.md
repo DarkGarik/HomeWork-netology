@@ -43,6 +43,24 @@ hello-world-7c8458888d-xdvs6   1/1     Running   0          4m51s
  * в deployment из задания 1 изменено количество реплик на 5
  * проверить что все поды перешли в статус running (kubectl get pods)
 
+### Ответ:
+```bash
+gorkov@gorkov-big-home:~/HomeWork-netology$ kubectl get pods
+NAME                           READY   STATUS    RESTARTS      AGE
+hello-world-7c8458888d-gffzx   1/1     Running   1 (18d ago)   19d
+hello-world-7c8458888d-xdvs6   1/1     Running   1 (18d ago)   19d
+gorkov@gorkov-big-home:~/HomeWork-netology$ kubectl apply -f /home/gorkov/HomeWork-netology/12-kubernetes-02-commands/deployment.yaml
+deployment.apps/hello-world configured
+gorkov@gorkov-big-home:~/HomeWork-netology$ kubectl get pods
+NAME                           READY   STATUS    RESTARTS      AGE
+hello-world-7c8458888d-2tqhm   1/1     Running   0             11s
+hello-world-7c8458888d-7m5ms   1/1     Running   0             11s
+hello-world-7c8458888d-gffzx   1/1     Running   1 (18d ago)   19d
+hello-world-7c8458888d-q65d8   1/1     Running   0             11s
+hello-world-7c8458888d-xdvs6   1/1     Running   1 (18d ago)   19d
+gorkov@gorkov-big-home:~/HomeWork-netology$ 
+```
+
 ---
 
 ### Как оформить ДЗ?
