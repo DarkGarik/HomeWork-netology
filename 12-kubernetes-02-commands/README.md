@@ -11,6 +11,20 @@
  * наличие deployment можно проверить командой kubectl get deployment
  * наличие подов можно проверить командой kubectl get pods
 
+### Ответ:
+[deployment.yaml](deployment.yaml)
+```bash
+gorkov@gorkov-big-home:~/HomeWork-netology/10-monitoring-04-elk/temp/configs$ kubectl apply -f /home/gorkov/HomeWork-netology/12-kubernetes-02-commands/deployment.yaml
+deployment.apps/hello-world created
+gorkov@gorkov-big-home:~/HomeWork-netology/10-monitoring-04-elk/temp/configs$ kubectl get deployment
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+hello-world   2/2     2            2           4m41s
+gorkov@gorkov-big-home:~/HomeWork-netology/10-monitoring-04-elk/temp/configs$ kubectl get pods
+NAME                           READY   STATUS    RESTARTS   AGE
+hello-world-7c8458888d-gffzx   1/1     Running   0          4m51s
+hello-world-7c8458888d-xdvs6   1/1     Running   0          4m51s
+```
+
 
 ## Задание 2: Просмотр логов для разработки
 Разработчикам крайне важно получать обратную связь от штатно работающего приложения и, еще важнее, об ошибках в его работе. 
