@@ -35,6 +35,70 @@ hello-world-7c8458888d-xdvs6   1/1     Running   0          4m51s
  * пользователь прописан в локальный конфиг (~/.kube/config, блок users)
  * пользователь может просматривать логи подов и их конфигурацию (kubectl logs pod <pod_id>, kubectl describe pod <pod_id>)
 
+### Ответ:
+openssl req -new -key dev.key \
+-out dev.csr \
+-subj "/CN=dev"
+
+
+openssl x509 -req -in dev.csr \
+-CA /etc/kubernetes/pki/ca.crt \
+-CAkey /etc/kubernetes/pki/ca.key \
+-CAcreateserial \
+-out dev.crt -days 500
+
+
+mkdir .certs && mv dev.crt dev.key .certs
+
+kubectl config set-credentials dev \
+--client-certificate=/home/dev/.certs/dev.crt \
+--client-key=/home/dev/.certs/dev.key
+
+kubectl config set-context dev-context \
+--cluster=cluster.local --user=dev
+
+
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMvakNDQWVhZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRJeU1UQXhNREUzTWpreE5Wb1hEVE15TVRBd056RTNNamt4TlZvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTW1SCit5Q0ZUMTIyL1pSNzJWSEs0QmhIOEQ5bzc3VkJUWUVocys0QlZ4Q3ZtMFNwQWxaWmJWSVZFNTFoZXhDTlpOTGwKTG9GVnlRYStITm1NN01hVHYvMnhramE1VnV6bGoxQWJ3K04xVGdZYXNlRFhSNlNrTnp4TEdRRUpzYnRsQWVaTAp6QTZYM3ZjbjJVeUFqenFYdGNYNldqSS9Ba3p3bTRhVkJHaWhySUpLLzN6VGJUbkdmNGZNYjQzQXZ5RGo4Ung0Clh0eGtEVDdmUEhsRXg2dnlZNktjeGwrY0krTm5VTjZZSFdKMDBWVDAxOTR6KzFoWlVPa0tpM1puc1ZMMmI4cWQKWGF6ZEtkVzhIUm1aTWJQZHk4SFBrS0E0RWtqa3JuVTZUY1lLNk1nLzAzdDY5ZlNjUUdLbUhISUdNM0d3YzVrTApCMVYvYndyOC9qa1VQVWd5TklzQ0F3RUFBYU5aTUZjd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZDMldkUGF3VkZ5SThQa2l2Ym50eGFGNjI3ZzZNQlVHQTFVZEVRUU8KTUF5Q0NtdDFZbVZ5Ym1WMFpYTXdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBQTMySXVhTHRYRjBpT0ZueVMreAp2aGpoVER2YUdSVFpnbzFWOTVhRExGQVFXN25RU21TUkpYWjZXWHRCQWduMGw3SFI2alE5aXFzMHdTWEdISGN5CjF3cC9TM2ZnMUxzRHNLTE10NTJKd1FQSlpIbVpTZU9xcXFycnN0NkhUMnBhUDQ0eUUwQWZNaTlYQkdIUVBKWnEKMWQ3UUdaUjJsOFF6MWdOUm9VY0ZQdWtkQ1lIWitERE9wYm8xV2szQ1p6dUh1YTZXREJDVDBRU0ZZSDhGbHRTWgpEWVU3WDRNd0xrY1JROE1aWFNycmNSOGVYbzJuY0JYSkxmb3htNDVjNDR4dGZLYm11UnZZMzZtU3g4c1hDbS9WClZOU1RZQ0RBa013M2w4Q3ZDVkx0RlUxRnVSUjR1Zjk1bS9ta1QyVU0zcHVDNlkya0xWV1l0eFdaUjRIc0NlTFgKemJzPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    server: https://127.0.0.1:6443
+  name: cluster.local
+
+contexts:
+- context:
+    cluster: cluster.local
+    user: dev
+  name: dev@cluster.local
+current-context: dev-context
+kind: Config
+preferences: {}
+users:
+- name: dev
+  user:
+    client-certificate: /home/dev/.certs/dev.crt
+    client-key: /home/dev/.certs/dev.key
+
+
+chown -R dev: /home/dev/
+
+kubectl create namespace app-namespace
+
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: pods-logs
+  namespace: app-namespace
+rules:
+  - apiGroups: []
+    resources: [ pods ]
+    verbs: [ logs, describe]
+
+kubectl create -f /home/dev/role.yaml
+kubectl apply -f /home/dev/rolebind.yaml
+
+kubectl get pods -n app-namespace 
 
 ## Задание 3: Изменение количества реплик 
 Поработав с приложением, вы получили запрос на увеличение количества реплик приложения для нагрузки. Необходимо изменить запущенный deployment, увеличив количество реплик до 5. Посмотрите статус запущенных подов после увеличения реплик. 
