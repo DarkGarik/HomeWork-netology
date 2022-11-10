@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: default
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: gorkov/netology_backend
+        ports:
+        - containerPort: 9000
+        env:
+          - name: DATABASE_URL
+            value: "postgres://postgres:postgres@db:5432/news"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: default
+spec:
+  ports:
+    - name: backend
+      port: 9000
+      targetPort: 9000
+  selector:
+    app: backend
+  type: ClusterIP
