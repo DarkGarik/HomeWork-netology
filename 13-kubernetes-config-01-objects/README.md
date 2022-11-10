@@ -61,6 +61,79 @@ Defaulted container "frontend" out of: frontend, backend
 * в окружении фронта прописан адрес сервиса бекенда;
 * в окружении бекенда прописан адрес сервиса базы данных.
 
+### Ответ:
+Подготовил конфиги:
+- [frontend](2/frontend.yaml)
+- [backend](2/backend.yaml)
+- [db](2/db.yaml)
+```bash
+gorkov@gorkov-big-home:~/HomeWork-netology/13-kubernetes-config-01-objects$ kubectl apply -f 2/
+deployment.apps/backend created
+service/backend created
+statefulset.apps/db created
+service/db created
+deployment.apps/frontend created
+service/frontend created
+gorkov@gorkov-big-home:~/HomeWork-netology/13-kubernetes-config-01-objects$ kubectl get po
+NAME                        READY   STATUS    RESTARTS   AGE
+backend-847f9589b8-h78n2    1/1     Running   0          7s
+db-0                        1/1     Running   0          7s
+frontend-54d55f8748-n4qlf   1/1     Running   0          7s
+gorkov@gorkov-big-home:~/HomeWork-netology/13-kubernetes-config-01-objects$ kubectl get po
+NAME                        READY   STATUS    RESTARTS   AGE
+backend-847f9589b8-h78n2    1/1     Running   0          13s
+db-0                        1/1     Running   0          13s
+frontend-54d55f8748-n4qlf   1/1     Running   0          13s
+gorkov@gorkov-big-home:~/HomeWork-netology/13-kubernetes-config-01-objects$ kubectl get po
+NAME                        READY   STATUS    RESTARTS   AGE
+backend-847f9589b8-h78n2    1/1     Running   0          15s
+db-0                        1/1     Running   0          15s
+frontend-54d55f8748-n4qlf   1/1     Running   0          15s
+gorkov@gorkov-big-home:~/HomeWork-netology/13-kubernetes-config-01-objects$ kubectl get po
+NAME                        READY   STATUS    RESTARTS   AGE
+backend-847f9589b8-h78n2    1/1     Running   0          18s
+db-0                        1/1     Running   0          18s
+frontend-54d55f8748-n4qlf   1/1     Running   0          18s
+gorkov@gorkov-big-home:~/HomeWork-netology/13-kubernetes-config-01-objects$ kubectl get po
+NAME                        READY   STATUS    RESTARTS   AGE
+backend-847f9589b8-h78n2    1/1     Running   0          5m17s
+db-0                        1/1     Running   0          5m17s
+frontend-54d55f8748-n4qlf   1/1     Running   0          5m17s
+gorkov@gorkov-big-home:~/HomeWork-netology/13-kubernetes-config-01-objects$ kubectl get deployments
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+backend    1/1     1            1           5m35s
+frontend   1/1     1            1           5m35s
+gorkov@gorkov-big-home:~/HomeWork-netology/13-kubernetes-config-01-objects$ kubectl get statefulset
+NAME   READY   AGE
+db     1/1     5m45s
+gorkov@gorkov-big-home:~/HomeWork-netology/13-kubernetes-config-01-objects$ kubectl get service
+NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+backend      ClusterIP   10.233.37.168   <none>        9000/TCP   5m58s
+db           ClusterIP   10.233.25.22    <none>        5432/TCP   5m58s
+frontend     ClusterIP   10.233.10.222   <none>        8000/TCP   5m58s
+kubernetes   ClusterIP   10.233.0.1      <none>        443/TCP    47h
+gorkov@gorkov-big-home:~/HomeWork-netology/13-kubernetes-config-01-objects$ kubectl exec frontend-54d55f8748-n4qlf -- curl localhost
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Список</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/build/main.css" rel="stylesheet">
+</head>
+<body>
+    <main class="b-page">
+        <h1 class="b-page__title">Список</h1>
+        <div class="b-page__content b-items js-list"></div>
+    </main>
+    <script src="/build/main.js"></script>
+</body>
+100   448  100   448    0     0   218k      0 --:--:-- --:--:-- --:--:--  218k
+```
+
+
 ## Задание 3 (*): добавить endpoint на внешний ресурс api
 Приложению потребовалось внешнее api, и для его использования лучше добавить endpoint в кластер, направленный на это api. Требования:
 * добавлен endpoint до внешнего api (например, геокодер).
