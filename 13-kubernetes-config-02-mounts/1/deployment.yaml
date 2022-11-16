@@ -1,0 +1,64 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: main
+  namespace: default
+  labels:
+    app: main
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: main
+  template:
+    metadata:
+      labels:
+        app: main
+    spec:
+      containers:
+        - name: frontend
+          image:  gorkov/netology_frontend
+          volumeMounts:
+            - mountPath: "/static"
+              name: static
+          ports:
+          - containerPort: 80
+        - name: backend
+          image: gorkov/netology_backend
+          volumeMounts:
+            - mountPath: "/static"
+              name: static
+          ports:
+          - containerPort: 9000
+      volumes:
+        - name: static
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: default
+spec:
+  ports:
+    - name: frontend
+      port: 8000
+      targetPort: 80
+  selector:
+    app: frontend
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: default
+spec:
+  ports:
+    - name: backend
+      port: 9000
+      targetPort: 9000
+  selector:
+    app: backend
+  type: ClusterIP
