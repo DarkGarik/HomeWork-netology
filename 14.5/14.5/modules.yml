@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo
+spec:
+  containers:
+  - name: one
+    image: fedora:latest
+    # command: [ "id" ]
+    command: [ "sh", "-c", "sleep 1h" ]
+  - name: two
+    image: fedora:latest
+    # command: [ "id" ]
+    command: [ "sh", "-c", "sleep 1h" ]
